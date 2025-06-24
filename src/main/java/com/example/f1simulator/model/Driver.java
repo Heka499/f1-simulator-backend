@@ -2,12 +2,14 @@ package com.example.f1simulator.model;
 
 public class Driver {
     private String name;
+    private int number;
     private double skill;
     private double consistency;
 
     // Constructor
-    public Driver(String name, double skill, double consistency) {
+    public Driver(String name, int number, double skill, double consistency) {
         this.name = name;
+        this.number = number;
         this.skill = skill;
         this.consistency = consistency;
     }
@@ -15,6 +17,10 @@ public class Driver {
     // Getters
     public String getName() {
         return this.name;
+    }
+
+    public int getNumber() {
+        return this.number;
     }
 
     public double getSkill() {
@@ -30,6 +36,10 @@ public class Driver {
         this.name = name;
     }
 
+    public void setNumber(int number) {
+        this.number = number;
+    }
+
     public void setSkill(double skill) {
         this.skill = skill;
     }
@@ -43,6 +53,7 @@ public class Driver {
     public String toString() {
         return "Driver{" +
                 "name='" + name + '\'' +
+                ", number=" + number +
                 ", skill=" + skill +
                 ", consistency=" + consistency +
                 '}';
