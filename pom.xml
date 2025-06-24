@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.example</groupId>
-	<artifactId>f1-simulator</artifactId>
+	<artifactId>f1-simulator-backend</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>F1Simulator</name>
 	<description>Formula 1 Simulation Project</description>
