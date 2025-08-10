@@ -1,5 +1,7 @@
 package com.example.f1simulator.model;
 
+import java.util.Objects;
+
 public class Driver {
     private String name;
     private int number;
@@ -47,6 +49,20 @@ public class Driver {
     public void setConsistency(double consistency) {
         this.consistency = consistency;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Driver driver = (Driver) o;
+        return number == driver.number && Objects.equals(name, driver.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, number);
+    }
+
 
     // toString method
     @Override
