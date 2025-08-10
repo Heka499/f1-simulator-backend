@@ -8,6 +8,7 @@ public class ChampionshipSimulationService {
 
     private final RaceSimulationService raceSimulationService = new RaceSimulationService();
     private final Map<Driver, Integer> championshipStandings = new HashMap<>();
+    private final Map<String, Integer> teamStandings = new HashMap<>();
     private final int[] pointsSystem = {25, 18, 15, 12, 10, 8, 6, 4, 2, 1}; // Points for top 10 finishes
 
     public void simulateChampionship(int numberOfRaces) {
@@ -20,14 +21,27 @@ public class ChampionshipSimulationService {
             }
 
             for (int i = 0; i < raceResults.size() && i < pointsSystem.length; i++) {
-                Driver driver = raceResults.get(i).getDriver();
+                RaceSimulationService.CarDriverPair pair = raceResults.get(i);
+                Driver driver = pair.getDriver();
+                String teamName = pair.getCar().getTeamName();
+
+                // Update driver standings
                 championshipStandings.put(driver, championshipStandings.getOrDefault(driver, 0) + pointsSystem[i]);
+
+                // Update team standings
+                teamStandings.put(teamName, teamStandings.getOrDefault(teamName, 0) + pointsSystem[i]);
             }
+
 
             System.out.println("\nChampionship Standings After Race " + race + ":");
             championshipStandings.entrySet().stream()
                     .sorted((a, b) -> b.getValue().compareTo(a.getValue()))
                     .forEach(entry -> System.out.println(entry.getKey().getName() + ": " + entry.getValue() + " points"));
+
+            System.out.println("\nTeam Standings After Race " + race + ":");
+            teamStandings.entrySet().stream()
+                    .sorted((a, b) -> b.getValue().compareTo(a.getValue()))
+                            .forEach(entry -> System.out.println(entry.getKey() + ": " + entry.getValue() + " points"));
             System.out.println();
         }
     }
