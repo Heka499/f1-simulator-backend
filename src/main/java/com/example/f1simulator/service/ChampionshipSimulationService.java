@@ -1,13 +1,14 @@
 package com.example.f1simulator.service;
 
 import com.example.f1simulator.model.Driver;
+import com.example.f1simulator.model.DriverStats;
 
 import java.util.*;
 
 public class ChampionshipSimulationService {
 
     private final RaceSimulationService raceSimulationService = new RaceSimulationService();
-    private final Map<Driver, Integer> championshipStandings = new HashMap<>();
+    private final Map<Driver, DriverStats> championshipStandings = new HashMap<>();
     private final Map<String, Integer> teamStandings = new HashMap<>();
     private final int[] pointsSystem = {25, 18, 15, 12, 10, 8, 6, 4, 2, 1}; // Points for top 10 finishes
 
@@ -26,7 +27,10 @@ public class ChampionshipSimulationService {
                 String teamName = pair.getCar().getTeamName();
 
                 // Update driver standings
-                championshipStandings.put(driver, championshipStandings.getOrDefault(driver, 0) + pointsSystem[i]);
+                championshipStandings.putIfAbsent(driver, new DriverStats());
+                DriverStats stats = championshipStandings.get(driver);
+                stats.setDriverName(driver.getName());
+                stats.addResult(i + 1); // i + 1 because positions are 1
 
                 // Update team standings
                 teamStandings.put(teamName, teamStandings.getOrDefault(teamName, 0) + pointsSystem[i]);
@@ -35,7 +39,7 @@ public class ChampionshipSimulationService {
 
             System.out.println("\nChampionship Standings After Race " + race + ":");
             championshipStandings.entrySet().stream()
-                    .sorted((a, b) -> b.getValue().compareTo(a.getValue()))
+                    .sorted((a, b) -> Double.compare(b.getValue().getPoints(), a.getValue().getPoints()))
                     .forEach(entry -> System.out.println(entry.getKey().getName() + ": " + entry.getValue() + " points"));
 
             System.out.println("\nTeam Standings After Race " + race + ":");
