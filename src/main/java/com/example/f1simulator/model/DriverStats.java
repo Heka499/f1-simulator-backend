@@ -21,7 +21,9 @@ public class DriverStats {
 
         if (position == 1) {
             wins++;
-        } else if (position <= 3) {
+        }
+
+        if (position <= 3) {
             podiums++;
         }
     }
