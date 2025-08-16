@@ -1,22 +1,22 @@
 package com.example.f1simulator.model;
 
 public class Car {
-    private String teamName;
+    private String carName;
     private double speed;
     private double reliability;
     private double handling;
 
     // Constructor
-    public Car(String teamName, double speed, double reliability, double handling) {
-        this.teamName = teamName;
+    public Car(String carName, double speed, double reliability, double handling) {
+        this.carName = carName;
         this.speed = speed;
         this.reliability = reliability;
         this.handling = handling;
     }
 
     // Getters
-    public String getTeamName() {
-        return teamName;
+    public String getCarName() {
+        return carName;
     }
 
     public double getSpeed() {
@@ -32,8 +32,8 @@ public class Car {
     }
 
     // Setters
-    public void setTeamName(String teamName) {
-        this.teamName = teamName;
+    public void setCarName(String carName) {
+        this.carName = carName;
     }
 
     public void setSpeed(double speed) {
@@ -52,7 +52,7 @@ public class Car {
     @Override
     public String toString() {
         return "Car{" +
-                "teamName='" + teamName + '\'' +
+                "carName='" + carName + '\'' +
                 ", speed=" + speed +
                 ", reliability=" + reliability +
                 ", handling=" + handling +
