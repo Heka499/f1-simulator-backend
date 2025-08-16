@@ -2,13 +2,15 @@ package com.example.f1simulator.model;
 
 public class Race {
     private String name;
-    private String location;
+    private String circuit;
+    private String location; // Location of the circuit
     private int laps;
     private double length; // in kilometers
 
     // Constructor
-    public Race(String name, String location, int laps, double length) {
+    public Race(String name, String circuit, String location, int laps, double length) {
         this.name = name;
+        this.circuit = circuit;
         this.location = location;
         this.laps = laps;
         this.length = length;
@@ -17,6 +19,10 @@ public class Race {
     // Getters
     public String getName() {
         return name;
+    }
+
+    public String getCircuit() {
+        return circuit;
     }
 
     public String getLocation() {
@@ -34,6 +40,10 @@ public class Race {
     // Setters
     public void setName(String name) {
         this.name = name;
+    }
+
+    public void setCircuit(String circuit) {
+        this.location = circuit;
     }
 
     public void setLocation(String location) {
