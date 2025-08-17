@@ -32,6 +32,28 @@ public class Championship {
         }
     }
 
+    public void updateDriverStandings(Map<Driver, Integer> driverPositions) {
+        int[] pointsSystem = {25, 18, 15, 12, 10, 8, 6, 4, 2, 1};
+
+        for (Map.Entry<Driver, Integer> entry : driverPositions.entrySet()) {
+            Driver driver = entry.getKey();
+            int position = entry.getValue();
+
+            if (position <= pointsSystem.length) {
+                driverStandings.put(driver, driverStandings.getOrDefault(driver, 0.0) + pointsSystem[position - 1]);
+            }
+        }
+    }
+
+    public void updateTeamStandings() {
+        for (Team team : teams) {
+            double teamPoints = team.getDrivers().stream()
+                    .mapToDouble(driver -> driverStandings.getOrDefault(driver, 0.0))
+                    .sum();
+            teamStandings.put(team, teamPoints);
+        }
+    }
+
     // Getters
     public int getYear() {
         return year;
@@ -51,6 +73,10 @@ public class Championship {
 
     public Map<Team, Double> getTeamStandings() {
         return teamStandings;
+    }
+
+    public ArrayList<Race> getRaces() {
+        return races;
     }
 
     // Setters
