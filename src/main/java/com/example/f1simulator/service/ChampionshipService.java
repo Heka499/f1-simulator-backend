@@ -11,9 +11,12 @@ import org.springframework.stereotype.Service;
 
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class ChampionshipService {
+    private final Map<Integer, Championship> championshipMap = new ConcurrentHashMap<>();
+    private final RaceSimulationService raceSimulationService = new RaceSimulationService();
 
     public ArrayList<Race> createRaceSchedule() {
         ArrayList<Race> races = new ArrayList<>();
@@ -146,6 +149,42 @@ public class ChampionshipService {
 
         // Create Championship
 
-        return new Championship(2025, drivers, teams, createRaceSchedule());
+        Championship championship = new Championship(year, drivers, teams, createRaceSchedule());
+        championshipMap.put(year, championship);
+        return championship;
+    }
+
+    public Championship getChampionship(int year) {
+        return championshipMap.get(year);
+    }
+
+    public String simulateNextRace(int year) {
+        Championship championship = championshipMap.get(year);
+        if (championship == null) {
+            return "Championship for the year " + year + " does not exist.";
+        }
+
+        List<Race> races = championship.getRaces();
+        if (races.isEmpty()) {
+            return "No races scheduled for the championship year " + year + ".";
+        }
+
+        Race nextRace = races.removeFirst();
+        RaceSimulationService.RaceResult raceResult = raceSimulationService.simulateRace(championship, nextRace);
+
+        championship.updateDriverStandings(raceResult.getDriverPositions());
+        championship.updateTeamStandings();
+
+        StringBuilder reultSummary = new StringBuilder("Race: " + nextRace.getName() + ", " + nextRace.getCircuit() + " Results:\n");
+        raceResult.getDriverResults().forEach(driver ->
+                reultSummary.append(driver.getName())
+                        .append(" (")
+                        .append(driver.getNumber())
+                        .append(") - Position: ")
+                        .append(raceResult.getDriverPositions().get(driver))
+                        .append("\n"));
+
+
+        return reultSummary.toString();
     }
 }
