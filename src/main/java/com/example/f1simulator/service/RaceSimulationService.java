@@ -2,74 +2,60 @@ package com.example.f1simulator.service;
 
 import com.example.f1simulator.model.Car;
 import com.example.f1simulator.model.Driver;
+import com.example.f1simulator.model.Championship;
+import com.example.f1simulator.model.Race;
+import com.example.f1simulator.model.Team;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class RaceSimulationService {
 
-    public static class CarDriverPair {
-        private Car car;
-        private Driver driver;
+    public static class RaceResult {
+        private final List<Driver> driverResults;
+        private final Map<Driver, Integer> driverPositions;
 
-        public CarDriverPair(Car car, Driver driver) {
-            this.car = car;
-            this.driver = driver;
+        public RaceResult(List<Driver> driverResults, Map<Driver, Integer> driverPositions) {
+            this.driverResults = driverResults;
+            this.driverPositions = driverPositions;
         }
 
-        public Car getCar() {
-            return car;
+        public List<Driver> getDriverResults() {
+            return driverResults;
         }
 
-        public Driver getDriver() {
-            return driver;
-        }
-
-        @Override
-        public String toString() {
-            return driver.getName() + " (" + car.getTeamName() + ")";
+        public Map<Driver, Integer> getDriverPositions() {
+            return driverPositions;
         }
     }
 
-    public List<CarDriverPair> simulateRace() {
+    public RaceResult simulateRace(Championship championship, Race race) {
+        List<Driver> drivers = championship.getDrivers();
+        Map<Driver, Double> performanceScores = new HashMap<>();
 
-        List<CarDriverPair> startingGrid = new ArrayList<>();
+        for (Driver driver: drivers) {
+            Team team = championship.getTeams().stream()
+                    .filter(t -> t.getDrivers().contains(driver))
+                    .findFirst()
+                    .orElse(null);
 
-        startingGrid.add(new CarDriverPair(
-                new Car("Red Bull", 95.0, 90.0, 85.0),
-                new Driver("Max Verstappen", 1, 98.0, 95.0)
-        ));
-
-        startingGrid.add(new CarDriverPair(
-                new Car("McLaren", 99.0, 90.0, 95.0),
-                new Driver("Oscar Piastri", 81, 90.0, 93.0)
-        ));
-
-        startingGrid.add(new CarDriverPair(
-                new Car("Mercedes", 93.0, 80.0, 90.0),
-                new Driver("George Russel", 63, 94.0, 94.0)
-        ));
-
-        startingGrid.add(new CarDriverPair(
-                new Car("Ferrari", 90.0, 90.0, 88.0),
-                new Driver("Charles Leclerc", 16, 95.0, 94.0)
-        ));
-
-        Map<CarDriverPair, Double> performanceScores = new HashMap<>();
-        for (CarDriverPair pair : startingGrid) {
-            double score = pair.getCar().getSpeed()
-                    + pair.getCar().getHandling() * 0.5
-                    + pair.getDriver().getSkill()
-                    * pair.getDriver().getConsistency()
-                    + Math.random() * 10;
-            performanceScores.put(pair, score);
+            if (team != null) {
+                Car car = team.getCar();
+                double score = car.getSpeed()
+                        + car.getHandling() * 0.5
+                        + driver.getSkill() * driver.getConsistency()
+                        + Math.random() * 10; // Random factor for unpredictability
+                performanceScores.put(driver, score);
+            }
         }
 
-        List<CarDriverPair> raceResult = new ArrayList<>(performanceScores.keySet());
-        raceResult.sort((a, b) -> Double.compare(performanceScores.get(b), performanceScores.get(a)));
+        List<Driver> raceResults = new ArrayList<>(performanceScores.keySet());
+        raceResults.sort((a, b) -> Double.compare(performanceScores.get(b), performanceScores.get(a)));
 
-        return raceResult;
+        Map<Driver, Integer> driverPositions = new HashMap<>();
+        for (int i = 0; i < raceResults.size(); i++) {
+            driverPositions.put(raceResults.get(i), i + 1); // Positions start from 1
+        }
+
+        return new RaceResult(raceResults, driverPositions);
     }
 }
