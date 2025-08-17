@@ -30,17 +30,37 @@ public class ChampionshipController {
                 .orElse("No teams available") + ".";
     }
 
-    @PostMapping("/championship/{id}/next")
-    public String nextRace() {
-        // This method can be used to proceed to the race of the championship
-        // For now, it just returns a confirmation message
-        return "Proceeding to the next race of the championship.";
+    @PostMapping("/championship/{year}/next")
+    public String nextRace(@PathVariable int year) {
+        Championship championship = championshipService.getChampionship(year);
+        if (championship == null) {
+            return "Championship for the year " + year + " does not exist.";
+        }
+        return championshipService.simulateNextRace(championship.getYear());
     }
 
-    @GetMapping("/championship/{id}/standings")
-    public String getStandings() {
-        // This method can be used to retrieve the current standings of the championship
-        // For now, it just returns a placeholder message
-        return "Current championship standings retrieved successfully.";
+    @GetMapping("/championship/{year}/standings")
+    public String getStandings(@PathVariable int year) {
+        Championship championship = championshipService.getChampionship(year);
+        if (championship == null) {
+            return "Championship for the year " + year + " does not exist.";
+        }
+
+        return "Driver Standings: \n" +
+                championship.getDriverStandings()
+                .entrySet()
+                .stream()
+                        .sorted((a, b) -> Double.compare(b.getValue(), a.getValue()))
+                .map(entry -> entry.getKey().getName() + ": " + entry.getValue())
+                .reduce((first, second) -> first + "\n" + second)
+                .orElse("No driver standings available") +
+                "\n\nTeam Standings: \n" +
+                championship.getTeamStandings()
+                .entrySet()
+                .stream()
+                .sorted((a, b) -> Double.compare(b.getValue(), a.getValue()))
+                .map(entry -> entry.getKey().getTeamName() + ": " + entry.getValue())
+                .reduce((first, second) -> first + "\n" + second)
+                .orElse("No team standings available");
     }
 }
